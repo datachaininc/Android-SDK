@@ -1,0 +1,31 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="in.datacha" >
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <application>
+
+        <receiver android:name="in.datacha.classes.LocationUpdatesBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="in.datacha.classes.LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".classes.BootUpReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+        <activity android:name="in.datacha.classes.PermissionsActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <service
+                   android:exported="false"
+                   android:name=".classes.DataUpdateJobService">
+                   <intent-filter>
+                       <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+                   </intent-filter>
+        </service>
+    </application>
+</manifest>

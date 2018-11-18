@@ -1,0 +1,72 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.google.gms.google-services'
+
+ext {
+    PUBLISH_GROUP_ID = 'in.datacha.android'
+    PUBLISH_ARTIFACT_ID = 'datachain-sdk'
+    PUBLISH_VERSION = '0.5.2'
+}
+android {
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+    compileSdkVersion 28
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 4
+        versionName "0.5.2"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'datachain-proguard-rules.txt'
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', "DATACHAIN_USER_DETAILS_API_URL", DATACHAIN_USER_DETAILS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_LOCATIONS_API_URL", DATACHAIN_USER_LOCATIONS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_EMAIL_API_URL", DATACHAIN_USER_EMAIL_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_SESSIONS_API_URL", DATACHAIN_USER_SESSIONS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_INTERESTS_API_URL", DATACHAIN_USER_INTERESTS_API_URL
+            buildConfigField 'String', "DATACHAIN_INAPP_PURCHASE_API_URL", DATACHAIN_INAPP_PURCHASE_API_URL
+            buildConfigField 'String', "DATACHAIN_SHARED_PREF", DATACHAIN_SHARED_PREF
+            buildConfigField 'String', "DATACHAIN_PUBLISHER_KEY_PREF", DATACHAIN_PUBLISHER_KEY_PREF
+            buildConfigField 'String', "DATACHAIN_USER_LOCATIONS", DATACHAIN_USER_LOCATIONS
+            buildConfigField 'String', "DATACHAIN_LAST_UPDATE_TIME", DATACHAIN_LAST_UPDATE_TIME
+
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', "DATACHAIN_USER_DETAILS_API_URL", DATACHAIN_USER_DETAILS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_LOCATIONS_API_URL", DATACHAIN_USER_LOCATIONS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_EMAIL_API_URL", DATACHAIN_USER_EMAIL_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_SESSIONS_API_URL", DATACHAIN_USER_SESSIONS_API_URL
+            buildConfigField 'String', "DATACHAIN_USER_INTERESTS_API_URL", DATACHAIN_USER_INTERESTS_API_URL
+            buildConfigField 'String', "DATACHAIN_INAPP_PURCHASE_API_URL", DATACHAIN_INAPP_PURCHASE_API_URL
+            buildConfigField 'String', "DATACHAIN_SHARED_PREF", DATACHAIN_SHARED_PREF
+            buildConfigField 'String', "DATACHAIN_PUBLISHER_KEY_PREF", DATACHAIN_PUBLISHER_KEY_PREF
+            buildConfigField 'String', "DATACHAIN_USER_LOCATIONS", DATACHAIN_USER_LOCATIONS
+            buildConfigField 'String', "DATACHAIN_LAST_UPDATE_TIME", DATACHAIN_LAST_UPDATE_TIME
+
+
+        }
+    }
+    resourcePrefix 'Datachain_'
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-ads:16.0.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+}
