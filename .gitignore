@@ -8,5 +8,5 @@
 /build
 /captures
 .externalNativeBuild
-/gradle.properties
+gradle.properties
 *.apk
