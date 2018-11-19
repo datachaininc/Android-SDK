@@ -91,11 +91,11 @@ class LocationManager {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,getPendingIntent(context));
 
         if(accuracy==LocationRequest.PRIORITY_HIGH_ACCURACY){
-            Utils.Log("Changed to High accuracy");
+            Utils.Log("Location Changed to High accuracy");
             SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_PREF_ACCURACY,"HIGH");
         }
         else{
-            Utils.Log("Changed to Balanced accuracy");
+            Utils.Log("Location Changed to Balanced accuracy");
             SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_PREF_ACCURACY,"BALANCED");
         }
 

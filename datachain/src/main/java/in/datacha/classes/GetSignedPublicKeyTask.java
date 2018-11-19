@@ -68,6 +68,7 @@ public class GetSignedPublicKeyTask extends AsyncTask<String ,Void, Boolean> {
                         JSONObject res = new JSONObject(response);
                         if(res.getBoolean("status")){
                             String signData = res.getString("sign");
+                            Utils.Log("App key signed");
                             SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_SIGNED_KEY, signData);
                         }
                         else{

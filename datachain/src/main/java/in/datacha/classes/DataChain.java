@@ -53,7 +53,7 @@ public class DataChain {
             return;
         }
         if(initialized) {
-            Utils.Log("Module already initialized");
+            Utils.Log("SDK already initialized");
             return;
         }
         initialized = true;
@@ -88,7 +88,7 @@ public class DataChain {
             Utils.Log("In app purchase tracking possible");
         }
         else{
-            Utils.Log("In app purchase tracking not possible");
+            Utils.Log("In app purchase tracking is not possible");
         }
 
 
@@ -100,9 +100,7 @@ public class DataChain {
      */
     static void onAppFocus() {
         foreground = true;
-        Utils.Log("On App Focus");
         if (trackGooglePurchase != null) {
-            Utils.Log("Calling track IAP");
             trackGooglePurchase.trackIAP();
         }
 

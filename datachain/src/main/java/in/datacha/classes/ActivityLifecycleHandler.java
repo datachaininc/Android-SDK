@@ -24,7 +24,6 @@ class ActivityLifecycleHandler {
     private static void setCurActivity(Activity activity) {
         if(sessionStartTimestamp==0){
             sessionStartTimestamp = new Date().getTime();
-            Utils.Log("session start:"+sessionStartTimestamp);
         }
         curActivity = activity;
     }
@@ -35,7 +34,6 @@ class ActivityLifecycleHandler {
     }
 
     static void onActivityResumed(Activity activity){
-        Utils.Log("Activity Resumed "+activity.getClass().getName());
         handleFocus();
         setCurActivity(activity);
     }
@@ -50,7 +48,6 @@ class ActivityLifecycleHandler {
     }
 
     static void onActivityDestroyed(Activity activity){
-        Utils.Log("Activity Destroyed "+activity.getClass().getName());
 
         if (activity == curActivity) {
             TrackGooglePurchase.unBindServiceConnection(activity);

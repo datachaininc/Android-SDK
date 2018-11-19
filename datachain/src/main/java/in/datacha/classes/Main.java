@@ -60,48 +60,55 @@ import in.datacha.BuildConfig;
 class Main{
 
     /**
-     * Register the app, by calling publisher url with app public key and get signed key
+     * Register the app, by calling publisher url with app public key
      *
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     static void registerAPP(){
-        DataChain dataChain = DataChain.getInstance();
-        if(dataChain.getPublisherUrl()!=null){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DataChain dataChain = DataChain.getInstance();
+                if(dataChain.getPublisherUrl()!=null){
 
-            SharedPrefOperations.putString(dataChain.getContext(),DatachainConstants.DATACHAIN_PUBLISHER_SERVER_URL,dataChain.getPublisherUrl());
-            try {
-                KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-                keyStore.load(null);
+                    SharedPrefOperations.putString(dataChain.getContext(),DatachainConstants.DATACHAIN_PUBLISHER_SERVER_URL,dataChain.getPublisherUrl());
+                    try {
+                        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+                        keyStore.load(null);
 
-                KeyPair keyPair = getKeyByAlias(keyStore);
-                if(keyPair==null){
-                    Utils.Log("Alias not found. Creating new keypair");
-                    keyPair = generateKey();
-                    if(keyPair == null) {
-                        Utils.Log("Creating new keypair with alias failed");
-                        return;
+                        KeyPair keyPair = getKeyByAlias(keyStore);
+                        if(keyPair==null){
+                            Utils.Log("Android Keystore: alias not found. Creating new keypair");
+                            keyPair = generateKey();
+                            if(keyPair == null) {
+                                Utils.Log("Creating new keypair with alias failed");
+                                return;
+                            }
+                            Utils.Log("Android Keystore: new keypair created");
+                            getSignedKey(keyPair);
+                        }
+                        else{
+                            if(SharedPrefOperations.getString(dataChain.getContext(), DatachainConstants.DATACHAIN_SIGNED_KEY,"").length()<=0){
+                                getSignedKey(keyPair);
+                            }
+                            initialize();
+                        }
+
+
+
+                    } catch (KeyStoreException e) {
+                        e.printStackTrace();
+                    } catch (CertificateException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    getSignedKey(keyPair);
                 }
-                else{
-                    if(SharedPrefOperations.getString(dataChain.getContext(), DatachainConstants.DATACHAIN_SIGNED_KEY,"").length()<=0){
-                        getSignedKey(keyPair);
-                    }
-                    initialize();
-                }
-
-
-
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
+        }).start();
+
     }
     private static void getSignedKey(final KeyPair keyPair){
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -115,12 +122,13 @@ class Main{
 
                     PublicKey publicKey = keyPair.getPublic();
                     byte[] publicEncoded = publicKey.getEncoded();
+                    Utils.Log("Sending app public key signing request");
                     GetSignedPublicKeyTask task1 = new GetSignedPublicKeyTask(DataChain.getInstance().getContext());
                     task1.execute(Base64.encodeToString(publicEncoded, Base64.DEFAULT).trim(), task.getResult().getToken());
 
                 }
                 else{
-                    Utils.Log("Instance Id No Result");
+                    Utils.Log("Instance Id no result");
 
                 }
             }
@@ -128,7 +136,7 @@ class Main{
 
     }
     /**
-     * Start getting data
+     * Initializing datachain sdk and start getting data
      *
      */
     private static void initialize(){
@@ -153,7 +161,9 @@ class Main{
                 Utils.Log("Location is not enabled");
             }
 
-            checkHashedEmailPhone(instance.getContext());
+            checkCachedEmailPhone(instance.getContext());
+
+            Utils.Log("SDK initialization complete");
 
         }
 
@@ -251,7 +261,7 @@ class Main{
                             task.execute(BuildConfig.DATACHAIN_USER_DETAILS_API_URL, key, gson.toJson(user), DatachainConstants.DATACHAIN_USER_DETAILS_UPDATE);
                             SharedPrefOperations.putInt(context, BuildConfig.DATACHAIN_LAST_UPDATE_TIME, currentDate);
 
-                            checkHashedEmailPhone(context);
+                            checkCachedEmailPhone(context);
                         }
 
 
@@ -604,7 +614,7 @@ class Main{
         setUserPurchase(infos);
     }
 
-    private static void checkHashedEmailPhone(Context context){
+    private static void checkCachedEmailPhone(Context context){
         String cacheEmail = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_EMAIL_CACHE, "");
         String cachePhone = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_PHONE_CACHE, "");
 
