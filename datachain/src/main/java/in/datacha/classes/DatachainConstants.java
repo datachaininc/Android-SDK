@@ -14,7 +14,7 @@ public class DatachainConstants {
     static final String DATACHAIN_SESSION_DETAIL_UPDATE = "Datachain_session_detail_update";
     static final String DATACHAIN_USER_INTERESTS = "Datachain_user_interests";
     static final String DATACHAIN_USER_INTEREST_UPDATE= "Datachain_user_interest_update";
-    static final String DATACHAIN_SDK_VERSION = "0.5.2";
+    static final String DATACHAIN_SDK_VERSION = "0.5.3";
     static final int DATACHAIN_LOCATION_DEFAULT_INTERVAL = 10; // minutes
     static final int DATACHAIN_LOCATION_MIN_INTERVAL = 10;
     static final int DATACHAIN_LOCATION_MAX_INTERVAL = 50;
