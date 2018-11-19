@@ -16,21 +16,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initializing datachain sdk
         DataChain.getInstance()
-                .publisherKey("DatachainNewBaw7wtEhP7rBrhGvueqk")
+                .publisherKey("PUBLISHER_KEY")
+                .serverUrl("SERVER_URL")
                 .enableLocation(true)
-                .locationUpdateInterval(12)
-                .serverUrl("https://lmxlynjk9i.execute-api.ap-south-1.amazonaws.com/Prod/auth")
+                .locationUpdateInterval(10)
                 .askLocationPermission(true)
                 .init(this);
 
-        String email = "jerinamathew@gmail.com";
-        String phone = "+919539741274";
 
-//        DataChain.setUserEmail(md5Hash(email), sha1Hash(email), sha256Hash(email));
-//        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));
-//
-        DataChain.setUserInterest("Edit","Image");
+        String email = "name@gmail.com";
+        String phone = "+911231231231";
+
+        // Passing hashed user email and phone number. Pass it after the user complete sign in
+        DataChain.setUserEmail(md5Hash(email), sha1Hash(email), sha256Hash(email));
+        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));
+
+        // Passing user interests based on the page they are in
+        DataChain.setUserInterest("USER_ACTION","TAG");
+
+        // Call when user make an inapp purchase
+        DataChain.setUserPurchase("CURRENCY_TYPE","AMOUNT");
     }
 
     @Override
