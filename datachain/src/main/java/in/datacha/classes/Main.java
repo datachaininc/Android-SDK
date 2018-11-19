@@ -616,7 +616,7 @@ class Main{
 
     /**
      * Checking if there's any cached email/phone to update
-     * @param context
+     * @param context context
      */
     private static void checkCachedEmailPhone(Context context){
         String cacheEmail = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_EMAIL_CACHE, "");
