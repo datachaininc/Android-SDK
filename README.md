@@ -232,7 +232,7 @@ _implementation &#39;com.firebase:firebase-jobdispatcher:0.8.5&#39;_
 1. If you have **user email** or **phone number** , update it using,
 
         DataChain.setUserEmail(md5Hash(email), sha1Hash(email), sha256Hash(email));
-        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));_
+        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));
 
     Code for hashing string is given at the bottom of this doc.
 
