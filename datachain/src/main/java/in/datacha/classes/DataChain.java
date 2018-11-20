@@ -69,7 +69,7 @@ public class DataChain {
             throw new NullPointerException("Context is null");
         }
         if(publisherUrl==null || publisherUrl.length()<=0){
-            throw new IllegalArgumentException(" Need server url");
+            throw new IllegalArgumentException("Server url is not defined");
         }
 
         ActivityLifecycleHandler.sessionStartTimestamp=new Date().getTime();
