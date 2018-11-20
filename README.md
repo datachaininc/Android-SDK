@@ -4,7 +4,7 @@
 
 This document contains detail information regarding the Datachain SDK including required permissions, list of data points collected, steps to integrate the SDK
 
-#### Datachain SDK Workflow
+### Datachain SDK Workflow
 
 **Publisher Registration**
 
