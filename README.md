@@ -1,4 +1,4 @@
-# Datachain Android SDK
+# Datachain SDK
 
 
 
@@ -177,7 +177,7 @@ Samples for asking user consent
 
 
 
-#### Android studio Implementation
+### Android studio Implementation
 
 Prerequisites
 
@@ -261,7 +261,7 @@ _implementation &#39;com.firebase:firebase-jobdispatcher:0.8.5&#39;_
 
 
 
-#### Unity Integration
+### Unity Integration
 
 1. Create &quot; **Plugins/Android**&quot; folders under **Assets** , and copy Datachain aar file in it.
 2. If you already have setup firebase messaging, go to step 3,
@@ -344,7 +344,7 @@ Add following location permission in manifest
 
 
 
-#### Sample codes
+### Sample codes
 
 Hashing in **Java** for **android**
 
