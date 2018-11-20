@@ -1,30 +1,30 @@
-**Datachain SDK**
+# Datachain Android SDK
 
 
 
 This document contains detail information regarding the Datachain SDK including required permissions, list of data points collected, steps to integrate the SDK
 
-**Datachain SDK Workflow**
+#### Datachain SDK Workflow
 
-Publisher Registration
+**Publisher Registration**
 
 App developer have to register with Datachain using their Publisher public key. This is a one time operation to get a new develop onboard with the Datachain system
 ![alt text](https://raw.githubusercontent.com/datachaininc/Android-SDK/master/Images/image4.jpg)
  
 
-Application Registration
+**Application Registration**
 
 The Datachain SDK has to register itself for the first time. Below is the workflow for such a registration
 ![alt text](https://raw.githubusercontent.com/datachaininc/Android-SDK/master/Images/image6.jpg)
  
-Data Publication
+**Data Publication**
 
 The SDK uses the below workflow to publish data to the Datachain server
 
  ![alt text](https://raw.githubusercontent.com/datachaininc/Android-SDK/master/Images/image1.jpg)
 
 
-**Permissions required**
+### Permissions required
 
 List of permissions required by the SDK
 
@@ -33,7 +33,7 @@ List of permissions required by the SDK
 3. android.permission.ACCESS\_FINE\_LOCATION
 4. android.permission.ACCESS\_COARSE\_LOCATION
 
-**Datapoints collected**
+### Datapoints collected
 
 The list of data points collected by the Datachain SDK
 
@@ -92,7 +92,7 @@ The list of data points collected by the Datachain SDK
 
 
 
-**Compliance with Google privacy policy**
+#### Compliance with Google privacy policy
 
 Datachain SDK takes all precautions to be compliant with Google privacy policy. Shared below is specific paragraph from Google privacy policy (from Google developer console) that concerns data collection and data sharing from Apps.
 
@@ -177,7 +177,7 @@ Samples for asking user consent
 
 
 
-**Android studio Implementation**
+#### Android studio Implementation
 
 Prerequisites
 
@@ -261,7 +261,7 @@ _implementation &#39;com.firebase:firebase-jobdispatcher:0.8.5&#39;_
 
 
 
-**Unity Integration**
+#### Unity Integration
 
 1. Create &quot; **Plugins/Android**&quot; folders under **Assets** , and copy Datachain aar file in it.
 2. If you already have setup firebase messaging, go to step 3,
@@ -344,7 +344,7 @@ Add following location permission in manifest
 
 
 
-**Sample codes**
+#### Sample codes
 
 Hashing in **Java** for **android**
 
