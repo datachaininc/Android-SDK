@@ -648,26 +648,40 @@ class Main{
      *
      * @param infos Purchase info list
      */
-    static void setUserPurchase(List<InAppPurchase.PurchaseInfo> infos){
+    private static void setUserPurchase(List<InAppPurchase.PurchaseInfo> infos){
         Context context = DataChain.getInstance().getContext();
         if(context==null){
+            return;
+        }
+        if(!SharedPrefOperations.getBoolean(context,DatachainConstants.DATACHAIN_TRACKING_ENABLED,true)){
             return;
         }
         String adId = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_ADVERTISING_ID, "");
         String pub_key = SharedPrefOperations.getString(context, BuildConfig.DATACHAIN_PUBLISHER_KEY_PREF, "");
 
-        InAppPurchase inAppPurchase = new InAppPurchase(adId,pub_key,infos);
-        inAppPurchase.setApp_package_name(context.getPackageName());
-        HttpPostAsyncTask task = new HttpPostAsyncTask(context);
-        task.execute(BuildConfig.DATACHAIN_INAPP_PURCHASE_API_URL, pub_key, new Gson().toJson(inAppPurchase), DatachainConstants.DATACHAIN_INAPP_PURCHASE_UPDATE);
+        if(adId.length()>0 && pub_key.length()>0) {
+            try {
+
+                InAppPurchase inAppPurchase = new InAppPurchase(adId, pub_key, infos);
+                inAppPurchase.setApp_package_name(context.getPackageName());
+                HttpPostAsyncTask task = new HttpPostAsyncTask(context);
+                task.execute(BuildConfig.DATACHAIN_INAPP_PURCHASE_API_URL, pub_key, new Gson().toJson(inAppPurchase), DatachainConstants.DATACHAIN_INAPP_PURCHASE_UPDATE);
+            }catch (Exception e){
+                Utils.Log(e.getMessage());
+            }
+        }
 
     }
 
     static void setUserPurchase(String iso, String amount){
-        List<InAppPurchase.PurchaseInfo> infos = new ArrayList<>();
-        infos.add(new InAppPurchase.PurchaseInfo(iso, amount));
+        try {
+            List<InAppPurchase.PurchaseInfo> infos = new ArrayList<>();
+            infos.add(new InAppPurchase.PurchaseInfo(iso, amount));
 
-        setUserPurchase(infos);
+            setUserPurchase(infos);
+        }catch (Exception e){
+            Utils.Log(e.getMessage());
+        }
     }
 
     /**
