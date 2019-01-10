@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
                 .publisherKey("DatachainIEnIfEkPmFw5PpfZVU4L2Jksd3")
                 .serverUrl("https://lmxlynjk9i.execute-api.ap-south-1.amazonaws.com/Prod/auth")
                 .enableLocation(true)
-                .debugMode(false)
+                .debugMode(true)
                 .debugLocationUpdateInterval(3)
                 .debugServerUpdateInterval(15)
                 .locationUpdateInterval(10)
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 //        DataChain.setUserInterest("USER_ACTION","TAG");
 
         // Call when user make an inapp purchase
-//        DataChain.setUserPurchase("CURRENCY_TYPE","AMOUNT");
+        DataChain.setUserPurchase("CURRENCY_TYPE","AMOUNT");
 
         DataChain.setUserInterests("READ",new String[] {"INDIAN","CHINESE"});
     }

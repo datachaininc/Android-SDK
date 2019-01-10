@@ -7,7 +7,6 @@ import java.util.TimeZone;
  class User {
     private String publisher_key;
     private String advertising_id;
-    private String android_id;
     private String device_model;
     private String device_manufacturer;
     private int android_version;
@@ -29,9 +28,6 @@ import java.util.TimeZone;
         this.sdk_version = DatachainConstants.DATACHAIN_SDK_VERSION;
     }
 
-    void setAndroid_id(String android_id) {
-        this.android_id = android_id;
-    }
 
     void setTimezone() {
         this.timezone = TimeZone.getDefault().getRawOffset();

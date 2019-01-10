@@ -92,7 +92,9 @@ class Main{
                             if(SharedPrefOperations.getString(dataChain.getContext(), DatachainConstants.DATACHAIN_SIGNED_KEY,"").length()<=0){
                                 getSignedKey(keyPair);
                             }
-                            initialize();
+                            else {
+                                initialize();
+                            }
                         }
 
 
@@ -129,7 +131,7 @@ class Main{
 
                 }
                 else{
-                    Utils.Log("Instance Id no result");
+                    Utils.Log("Instance Id not found");
 
                 }
             }
@@ -232,9 +234,6 @@ class Main{
 
                             }
                             user.setApp_package_name(context.getPackageName());
-                            @SuppressLint("HardwareIds") String android_id = Settings.Secure.getString(context.getContentResolver(),
-                                    Settings.Secure.ANDROID_ID);
-                            user.setAndroid_id(android_id);
 
                             user.setLanguage(Locale.getDefault().getDisplayLanguage());
                             final ConnectivityManager connMgr = (ConnectivityManager)
@@ -666,7 +665,7 @@ class Main{
 
     static void setUserPurchase(String iso, String amount){
         List<InAppPurchase.PurchaseInfo> infos = new ArrayList<>();
-        infos.add(new InAppPurchase.PurchaseInfo("unknown",iso, amount));
+        infos.add(new InAppPurchase.PurchaseInfo(iso, amount));
 
         setUserPurchase(infos);
     }

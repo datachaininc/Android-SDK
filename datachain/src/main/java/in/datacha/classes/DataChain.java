@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
@@ -58,7 +59,7 @@ public class DataChain {
             Utils.Log("SDK already initialized");
             return;
         }
-        initialized = true;
+
         if (datachainInstance.getPublisher_key() == null) {
             throw new IllegalArgumentException("Publisher key not defined");
         }
@@ -70,9 +71,11 @@ public class DataChain {
         if(context==null){
             throw new NullPointerException("Context cannot be null");
         }
-        if(publisherUrl==null || publisherUrl.length()<=0){
+        if(publisherUrl==null || publisherUrl.length()<=0 || !Patterns.WEB_URL.matcher(publisherUrl).matches()){
             throw new IllegalArgumentException("Server url is not defined");
         }
+
+        initialized = true;
 
         ActivityLifecycleHandler.sessionStartTimestamp=new Date().getTime();
         datachainInstance.context = context;

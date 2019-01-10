@@ -50,7 +50,6 @@ class ActivityLifecycleHandler {
     static void onActivityDestroyed(Activity activity){
 
         if (activity == curActivity) {
-            TrackGooglePurchase.unBindServiceConnection(activity);
             curActivity = null;
             handleLostFocus();
         }

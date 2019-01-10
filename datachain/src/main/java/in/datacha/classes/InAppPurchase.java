@@ -79,26 +79,17 @@ import java.util.TimeZone;
     }
 
  static class PurchaseInfo{
-     private String sku;
      private String iso;
      private String amount;
 
       PurchaseInfo() {
      }
 
-      PurchaseInfo(String sku, String iso, String amount) {
-         this.sku = sku;
+      PurchaseInfo(String iso, String amount) {
          this.iso = iso;
          this.amount = amount;
      }
 
-      String getSku() {
-         return sku;
-     }
-
-      void setSku(String sku) {
-         this.sku = sku;
-     }
 
       String getIso() {
          return iso;
