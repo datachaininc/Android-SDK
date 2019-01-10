@@ -54,6 +54,7 @@ public class GetSignedPublicKeyTask extends AsyncTask<String ,Void, Boolean> {
                     JSONObject payload = new JSONObject();
                     payload.put("key", public_key);
                     payload.put("token",token);
+                    payload.put("package",context.getPackageName());
                     // Send the post body
 
                         OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());

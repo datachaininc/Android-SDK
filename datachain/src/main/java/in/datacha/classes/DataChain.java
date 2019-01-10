@@ -1,16 +1,15 @@
 package in.datacha.classes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
-import android.util.Patterns;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -19,15 +18,18 @@ import in.datacha.BuildConfig;
 public class DataChain {
 
     static boolean initialized = false;
+    @SuppressLint("StaticFieldLeak")
     private static DataChain datachainInstance = null;
     private Context context;
     private Boolean enableLocation = true;
     private String publisher_key;
     private int locationUpdateInterval = DatachainConstants.DATACHAIN_LOCATION_DEFAULT_INTERVAL;
-    private static TrackGooglePurchase trackGooglePurchase;
+    private int debugLocationUpdateInterval = DatachainConstants.DATACHAIN_DEBUG_LOCATION_UPDATE_INTERVAL;
+    private int debugServerUpdateInterval = DatachainConstants.DATACHAIN_SERVER_UPDATE_INTERVAL;
     static boolean foreground;
     private String publisherUrl;
     private Boolean askLocationPermission=true;
+    private Boolean debugMode=false;
 
 
     public static DataChain getInstance(){
@@ -66,7 +68,7 @@ public class DataChain {
             }
         }
         if(context==null){
-            throw new NullPointerException("Context is null");
+            throw new NullPointerException("Context cannot be null");
         }
         if(publisherUrl==null || publisherUrl.length()<=0){
             throw new IllegalArgumentException("Server url is not defined");
@@ -74,6 +76,20 @@ public class DataChain {
 
         ActivityLifecycleHandler.sessionStartTimestamp=new Date().getTime();
         datachainInstance.context = context;
+        if(datachainInstance.debugMode){
+            if(debugLocationUpdateInterval<1){
+                throw new IllegalArgumentException("Location update interval cannot be less than 1 minute");
+            }
+            if(debugServerUpdateInterval<15){
+                throw new IllegalArgumentException("Server update interval cannot be less than 15 minutes");
+            }
+            Toast.makeText(context, "Datachain debug mode enabled", Toast.LENGTH_SHORT).show();
+            SharedPrefOperations.putBoolean(context,DatachainConstants.DATACHAIN_PREF_DEBUG_MODE, true);
+            SharedPrefOperations.putInt(context,DatachainConstants.DATACHAIN_PREF_DEBUG_LOCATION_INTERVAL, debugLocationUpdateInterval);
+        }
+        else{
+            SharedPrefOperations.putBoolean(context,DatachainConstants.DATACHAIN_PREF_DEBUG_MODE, false);
+        }
         Main.registerAPP();
 
         foreground = (context instanceof Activity);
@@ -82,14 +98,6 @@ public class DataChain {
         }
         else
             ActivityLifecycleHandler.nextResumeIsFirstActivity = true;
-
-        if (TrackGooglePurchase.CanTrack(context)) {
-            trackGooglePurchase = new TrackGooglePurchase(context);
-            Utils.Log("In app purchase tracking possible");
-        }
-        else{
-            Utils.Log("In app purchase tracking is not possible");
-        }
 
 
     }
@@ -100,9 +108,7 @@ public class DataChain {
      */
     static void onAppFocus() {
         foreground = true;
-        if (trackGooglePurchase != null) {
-            trackGooglePurchase.trackIAP();
-        }
+
 
     }
 
@@ -140,7 +146,6 @@ public class DataChain {
         LocationManager.changeLocationAccuracy(getInstance().context,LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
 
-
     }
     String getPublisher_key() {
         return this.publisher_key;
@@ -160,6 +165,18 @@ public class DataChain {
 
     Boolean getAskLocationPermission() {
         return this.askLocationPermission;
+    }
+
+    boolean getDebugMode() {
+        return this.debugMode;
+    }
+
+    int getDebugLocationUpdateInterval(){
+        return this.debugLocationUpdateInterval;
+    }
+
+    int getDebugServerUpdateInterval(){
+        return this.debugServerUpdateInterval;
     }
 
 
@@ -191,12 +208,28 @@ public class DataChain {
         return this;
     }
 
+    public DataChain debugMode(boolean mode){
+        this.debugMode = mode;
+        return this;
+    }
+
+    public DataChain debugLocationUpdateInterval(int interval){
+        this.debugLocationUpdateInterval = interval;
+        return this;
+    }
+
+
+    public DataChain debugServerUpdateInterval(int interval){
+        this.debugServerUpdateInterval = interval;
+        return this;
+    }
+
 
     /**
      * Get hashed email of the user
      *
-     * @param md5Email      md5 hashed email
-     * @param sha1Email     sha1 hashed email
+     * @param md5Email md5 hashed email
+     * @param sha1Email sha1 hashed email
      * @param sha256Email sha256 hashed email
      */
     public static void setUserEmail(String md5Email, String sha1Email, String sha256Email){
@@ -235,6 +268,14 @@ public class DataChain {
             return;
         if(initialized){
             Main.setUserInterest(action, tag);
+        }
+    }
+
+    public static void setUserInterests(String action, String[] tags){
+        if(action.length()<=0 && tags.length<=0)
+            return;
+        if(initialized){
+            Main.setUserInterests(action, tags);
         }
     }
 

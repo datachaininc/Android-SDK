@@ -43,6 +43,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
@@ -60,7 +61,7 @@ import in.datacha.BuildConfig;
 class Main{
 
     /**
-     * Register the app, by calling publisher url with app public key
+     * Register the app, by calling publisher server url with app public key
      *
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -124,7 +125,7 @@ class Main{
                     byte[] publicEncoded = publicKey.getEncoded();
                     Utils.Log("Sending app public key signing request");
                     GetSignedPublicKeyTask task1 = new GetSignedPublicKeyTask(DataChain.getInstance().getContext());
-                    task1.execute(Base64.encodeToString(publicEncoded, Base64.DEFAULT).trim(), task.getResult().getToken());
+                    task1.execute(Base64.encodeToString(publicEncoded, Base64.DEFAULT).trim(), task.getResult().getToken().trim());
 
                 }
                 else{
@@ -463,24 +464,71 @@ class Main{
         }
         if(action.length()<=0 && tag.length()<=0)
             return;
+        try {
+            UserInterests userInterests = new UserInterests();
+            String intrsts = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, "");
+            List<UserInterests.Interests> interestsList = new ArrayList<>();
+            Gson gson = new Gson();
+            if (intrsts.length() > 0) {
+                userInterests = gson.fromJson(intrsts, UserInterests.class);
+                interestsList.addAll(userInterests.getUser_interests());
+            }
+            interestsList.add(new UserInterests.Interests(action, tag));
+            userInterests.setUser_interests(interestsList);
+            userInterests.setApp_package_name(context.getPackageName());
+            String adId = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_ADVERTISING_ID, "");
+            userInterests.setAdvertising_id(adId);
+            userInterests.setPublisher_key(SharedPrefOperations.getString(context, BuildConfig.DATACHAIN_PUBLISHER_KEY_PREF, ""));
 
-        UserInterests userInterests = new UserInterests();
-        String intrsts = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, "");
-        List<UserInterests.Interests> interestsList = new ArrayList<>();
-        Gson gson = new Gson();
-        if(intrsts.length()>0){
-            userInterests = gson.fromJson(intrsts, UserInterests.class);
-            interestsList.addAll(userInterests.getUser_interests());
+            SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, gson.toJson(userInterests));
+            Utils.Log("Received User Interests");
+        }catch (ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        interestsList.add(new UserInterests.Interests(action, tag));
-        userInterests.setUser_interests(interestsList);
-        userInterests.setApp_package_name(context.getPackageName());
-        String adId = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_ADVERTISING_ID, "");
-        userInterests.setAdvertising_id(adId);
-        userInterests.setPublisher_key(SharedPrefOperations.getString(context, BuildConfig.DATACHAIN_PUBLISHER_KEY_PREF, ""));
 
-        SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, gson.toJson(userInterests));
 
+    }
+
+    static void setUserInterests(String action, String[] tags){
+
+        Context context = DataChain.getInstance().getContext();
+        if(context==null){
+            return;
+        }
+        if(!SharedPrefOperations.getBoolean(context,DatachainConstants.DATACHAIN_TRACKING_ENABLED,true)){
+            return;
+        }
+        if(action.length()<=0 && tags.length<=0)
+            return;
+
+        try {
+            UserInterests userInterests = new UserInterests();
+            String intrsts = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, "");
+            List<UserInterests.Interests> interestsList = new ArrayList<>();
+            Gson gson = new Gson();
+            if (intrsts.length() > 0) {
+                userInterests = gson.fromJson(intrsts, UserInterests.class);
+                interestsList.addAll(userInterests.getUser_interests());
+            }
+            for (String tag : tags) {
+                interestsList.add(new UserInterests.Interests(action, tag));
+            }
+
+            userInterests.setUser_interests(interestsList);
+            userInterests.setApp_package_name(context.getPackageName());
+            String adId = SharedPrefOperations.getString(context, DatachainConstants.DATACHAIN_USER_ADVERTISING_ID, "");
+            userInterests.setAdvertising_id(adId);
+            userInterests.setPublisher_key(SharedPrefOperations.getString(context, BuildConfig.DATACHAIN_PUBLISHER_KEY_PREF, ""));
+
+            SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_USER_INTERESTS, gson.toJson(userInterests));
+            Utils.Log("Received User Interests");
+        }catch (ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -494,19 +542,24 @@ class Main{
 
     private static void startFirebaseJob(Context context){
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
-        int windowStart = (int) TimeUnit.MINUTES.toSeconds(50);
+        int interval = DatachainConstants.DATACHAIN_SERVER_UPDATE_INTERVAL;
+        if(SharedPrefOperations.getBoolean(context,DatachainConstants.DATACHAIN_PREF_DEBUG_MODE,false)){
+            if(DataChain.getInstance()!=null)
+                interval = DataChain.getInstance().getDebugServerUpdateInterval();
+        }
+        int windowStart = (int) TimeUnit.MINUTES.toSeconds(interval);
         Job myJob = dispatcher.newJobBuilder()
                 .setService(DataUpdateJobService.class)
                 .setTag("location-update-tag")
                 .setRecurring(true)
                 .setLifetime(Lifetime.FOREVER)
-                .setTrigger(Trigger.executionWindow(windowStart, windowStart+(int)TimeUnit.MINUTES.toSeconds(10)))
+                .setTrigger(Trigger.executionWindow(windowStart, windowStart+(int)TimeUnit.MINUTES.toSeconds(5)))
                 .setReplaceCurrent(false)
                 .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
                 .build();
 
         dispatcher.schedule(myJob);
-        Utils.Log("Firebase job started");
+        Utils.Log("Firebase job started with "+String.valueOf(interval)+" minutes interval");
 
 
     }
@@ -514,7 +567,7 @@ class Main{
     /**
      * Get android keystore keypair using alias
      *
-     * @param keyStore eystore object
+     * @param keyStore keystore object
      * @return  keypair
      */
     @Nullable
@@ -581,6 +634,10 @@ class Main{
         } catch (NoSuchProviderException e) {
             Utils.Log(e.getMessage());
         } catch (InvalidAlgorithmParameterException e) {
+            Utils.Log(e.getMessage());
+        } catch (ProviderException e){
+            Utils.Log(e.getMessage());
+        } catch (IllegalArgumentException e){
             Utils.Log(e.getMessage());
         }
 

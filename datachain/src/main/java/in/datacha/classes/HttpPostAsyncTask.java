@@ -58,6 +58,9 @@ public class HttpPostAsyncTask extends AsyncTask<String, Void, Void> {
                     if(!SharedPrefOperations.getBoolean(context, DatachainConstants.DATACHAIN_TRACKING_ENABLED,true))
                         return null;
 
+                    if(type!=null)
+                        Utils.Log("Server update - "+type+": started");
+
                     // Create the urlConnection
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -86,12 +89,9 @@ public class HttpPostAsyncTask extends AsyncTask<String, Void, Void> {
                     payload.put("signed", signedData[0]);
                     payload.put("key", signedData[1].trim());
                     payload.put("signed_key", signedKey);
-
+                    payload.put("debug_mode",SharedPrefOperations.getBoolean(context,DatachainConstants.DATACHAIN_PREF_DEBUG_MODE,false));
 
                     OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
-//                    String postDataPayload = new Gson().toJson(payload);
-//                    if(postDataPayload==null || postDataPayload.length()<=0)
-//                        return null;
                     writer.write(payload.toString());
                     writer.flush();
                     writer.close();
@@ -119,10 +119,10 @@ public class HttpPostAsyncTask extends AsyncTask<String, Void, Void> {
                                 SharedPrefOperations.removeKey(context, DatachainConstants.DATACHAIN_USER_INTERESTS);
                             }
                         }
-                        Utils.Log("Update status "+type+":"+String.valueOf(statusCode));
+                        Utils.Log("Server update status - "+type+":"+String.valueOf(statusCode));
                     }
                     else {
-                        Utils.Log("Update status :"+String.valueOf(statusCode));
+                        Utils.Log("Server update status :"+String.valueOf(statusCode));
                     }
 
 

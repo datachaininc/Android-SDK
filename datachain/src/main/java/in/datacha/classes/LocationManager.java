@@ -14,6 +14,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.concurrent.TimeUnit;
+
 class LocationManager {
     private static final long TIME_FOREGROUND_SEC = 5 * 60;
     private static final long FOREGROUND_UPDATE_TIME_MS = (TIME_FOREGROUND_SEC - 30) * 1_000;
@@ -78,6 +80,11 @@ class LocationManager {
 
     @SuppressLint("MissingPermission")
     private static void createLocationRequest(Context context, long update_interval,int accuracy) {
+
+        if(SharedPrefOperations.getBoolean(context,DatachainConstants.DATACHAIN_PREF_DEBUG_MODE,false)){
+            update_interval = (int) TimeUnit.MINUTES.toMillis(SharedPrefOperations.getInt(context, DatachainConstants.DATACHAIN_PREF_DEBUG_LOCATION_INTERVAL, DatachainConstants.DATACHAIN_DEBUG_LOCATION_UPDATE_INTERVAL));
+        }
+
         LocationRequest mLocationRequest = new LocationRequest();
 
         mLocationRequest.setInterval(update_interval);
@@ -91,11 +98,11 @@ class LocationManager {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,getPendingIntent(context));
 
         if(accuracy==LocationRequest.PRIORITY_HIGH_ACCURACY){
-            Utils.Log("Location Changed to High accuracy");
+            Utils.Log("Location request accuracy changed to High");
             SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_PREF_ACCURACY,"HIGH");
         }
         else{
-            Utils.Log("Location Changed to Balanced accuracy");
+            Utils.Log("Location request accuracy changed to Balanced");
             SharedPrefOperations.putString(context, DatachainConstants.DATACHAIN_PREF_ACCURACY,"BALANCED");
         }
 

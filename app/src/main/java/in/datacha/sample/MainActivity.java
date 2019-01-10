@@ -18,9 +18,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Initializing datachain sdk
         DataChain.getInstance()
-                .publisherKey("PUBLISHER_KEY")
-                .serverUrl("SERVER_URL")
+                .publisherKey("DatachainIEnIfEkPmFw5PpfZVU4L2Jksd3")
+                .serverUrl("https://lmxlynjk9i.execute-api.ap-south-1.amazonaws.com/Prod/auth")
                 .enableLocation(true)
+                .debugMode(false)
+                .debugLocationUpdateInterval(3)
+                .debugServerUpdateInterval(15)
                 .locationUpdateInterval(10)
                 .askLocationPermission(true)
                 .init(this);
@@ -30,14 +33,16 @@ public class MainActivity extends AppCompatActivity {
         String phone = "+911231231231";
 
         // Passing hashed user email and phone number. Pass it after the user complete sign in
-        DataChain.setUserEmail(md5Hash(email), sha1Hash(email), sha256Hash(email));
-        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));
+//        DataChain.setUserEmail(md5Hash(email), sha1Hash(email), sha256Hash(email));
+//        DataChain.setUserPhoneNumber(md5Hash(phone), sha1Hash(phone), sha256Hash(phone));
 
         // Passing user interests based on the page they are in
-        DataChain.setUserInterest("USER_ACTION","TAG");
+//        DataChain.setUserInterest("USER_ACTION","TAG");
 
         // Call when user make an inapp purchase
-        DataChain.setUserPurchase("CURRENCY_TYPE","AMOUNT");
+//        DataChain.setUserPurchase("CURRENCY_TYPE","AMOUNT");
+
+        DataChain.setUserInterests("READ",new String[] {"INDIAN","CHINESE"});
     }
 
     @Override

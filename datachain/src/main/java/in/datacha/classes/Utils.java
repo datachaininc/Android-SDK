@@ -4,6 +4,9 @@ import android.util.Log;
 
 class Utils {
     static void Log(String message){
-        Log.d("Datachain",message);
+        if(DataChain.getInstance()!=null)
+            if(DataChain.getInstance().getDebugMode()) {
+                Log.d("DatachainPublisherSDK", message);
+            }
     }
 }
